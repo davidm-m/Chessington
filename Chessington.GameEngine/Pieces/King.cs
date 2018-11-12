@@ -10,7 +10,21 @@ namespace Chessington.GameEngine.Pieces
 
         public override IEnumerable<Square> GetAvailableMoves(Board board)
         {
-            return Enumerable.Empty<Square>();
+            var available = new List<Square>();
+            var location = board.FindPiece(this);
+            for (var i = -1; i < 2; i++)
+            {
+                for (var j = -1; j < 2; j++)
+                {
+                    if (i == 0 && j == 0) continue;
+                    var square = Square.At(location.Row + i, location.Col + j);
+                    if (Square.IsValid(square))
+                    {
+                        available.Add(square);
+                    }
+                }
+            }
+            return available;
         }
     }
 }
