@@ -16,6 +16,16 @@
             return new Square(row, col);
         }
 
+        public static bool IsValid(int row, int col)
+        {
+            return (row >= 0) && (row <= GameSettings.BoardSize) && (col >= 0) && (col <= GameSettings.BoardSize);
+        }
+
+        public static bool IsValid(Square square)
+        {
+            return (square.Row >= 0) && (square.Row <= GameSettings.BoardSize) && (square.Col >= 0) && (square.Col <= GameSettings.BoardSize);
+        }
+
         public bool Equals(Square other)
         {
             return Row == other.Row && Col == other.Col;

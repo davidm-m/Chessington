@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 
 namespace Chessington.GameEngine.Pieces
@@ -12,21 +13,15 @@ namespace Chessington.GameEngine.Pieces
         {
             var available = new List<Square>();
             var location = board.FindPiece(this);
-            if (Player == Player.White)
+            var direction = (Player == Player.White) ? -1 : 1;
+            if (board.GetPiece(Square.At(location.Row + direction, location.Col)) != null)
             {
-                if (location.Row == 7)
-                {
-                    available.Add(Square.At(location.Row - 2, location.Col));
-                }
-                available.Add(Square.At(location.Row - 1, location.Col));
+                return available;
             }
-            else
+            available.Add(Square.At(location.Row + direction, location.Col));
+            if (!HasMoved)
             {
-                if (location.Row == 1)
-                {
-                    available.Add(Square.At(location.Row + 2, location.Col));
-                }
-                available.Add(Square.At(location.Row + 1, location.Col));
+                available.Add(Square.At(location.Row + 2*direction, location.Col));
             }
 
             return available;

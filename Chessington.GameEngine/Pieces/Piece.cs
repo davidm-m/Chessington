@@ -9,14 +9,18 @@ namespace Chessington.GameEngine.Pieces
         protected Piece(Player player)
         {
             Player = player;
+            HasMoved = false;
         }
 
         public Player Player { get; private set; }
+
+        public bool HasMoved { get; private set; }
 
         public abstract IEnumerable<Square> GetAvailableMoves(Board board);
 
         public void MoveTo(Board board, Square newSquare)
         {
+            HasMoved = true;
             var currentSquare = board.FindPiece(this);
             board.MovePiece(currentSquare, newSquare);
         }
@@ -25,19 +29,57 @@ namespace Chessington.GameEngine.Pieces
         {
             var moves = new List<Square>();
             var location = board.FindPiece(this);
-            for (var row = 0; row < 8; row++)
+            for (var row = location.Row + 1; row < 8; row++)
             {
-                if (row != location.Row)
+                if (board.GetPiece(Square.At(row, location.Col)) != null)
                 {
-                    moves.Add(Square.At(row, location.Col));
+                    if (board.GetPiece(Square.At(row, location.Col)).Player != Player)
+                    {
+                        moves.Add(Square.At(row, location.Col));
+                    }
+
+                    break;
                 }
+                moves.Add(Square.At(row, location.Col));
             }
-            for (var col = 0; col < 8; col++)
+            for (var row = location.Row - 1; row >= 0; row--)
             {
-                if (col != location.Col)
+                if (board.GetPiece(Square.At(row, location.Col)) != null)
                 {
-                    moves.Add(Square.At(location.Row, col));
+                    if (board.GetPiece(Square.At(row, location.Col)).Player != Player)
+                    {
+                        moves.Add(Square.At(row, location.Col));
+                    }
+
+                    break;
                 }
+                moves.Add(Square.At(row, location.Col));
+            }
+            for (var col = location.Col + 1; col < 8; col++)
+            {
+                if (board.GetPiece(Square.At(location.Row, col)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row, col)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row, col));
+                    }
+
+                    break;
+                }
+                moves.Add(Square.At(location.Row, col));
+            }
+            for (var col = location.Col - 1; col >= 0; col--)
+            {
+                if (board.GetPiece(Square.At(location.Row, col)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row, col)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row, col));
+                    }
+
+                    break;
+                }
+                moves.Add(Square.At(location.Row, col));
             }
             return moves;
         }
@@ -48,18 +90,54 @@ namespace Chessington.GameEngine.Pieces
             var location = board.FindPiece(this);
             for (var i = 1; location.Row + i < 8 && location.Col + i < 8; i++)
             {
+                if (board.GetPiece(Square.At(location.Row + i, location.Col + i)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row + i, location.Col + i)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row + i, location.Col + i));
+                    }
+
+                    break;
+                }
                 moves.Add(Square.At(location.Row + i, location.Col + i));
             }
             for (var i = 1; location.Row + i < 8 && location.Col - i >= 0; i++)
             {
+                if (board.GetPiece(Square.At(location.Row + i, location.Col - i)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row + i, location.Col - i)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row + i, location.Col - i));
+                    }
+
+                    break;
+                }
                 moves.Add(Square.At(location.Row + i, location.Col - i));
             }
             for (var i = 1; location.Row - i >= 0 && location.Col + i < 8; i++)
             {
+                if (board.GetPiece(Square.At(location.Row - i, location.Col + i)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row - i, location.Col + i)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row - i, location.Col + i));
+                    }
+
+                    break;
+                }
                 moves.Add(Square.At(location.Row - i, location.Col + i));
             }
             for (var i = 1; location.Row - i >= 0 && location.Col - i >= 0; i++)
             {
+                if (board.GetPiece(Square.At(location.Row - i, location.Col - i)) != null)
+                {
+                    if (board.GetPiece(Square.At(location.Row - i, location.Col - i)).Player != Player)
+                    {
+                        moves.Add(Square.At(location.Row - i, location.Col - i));
+                    }
+
+                    break;
+                }
                 moves.Add(Square.At(location.Row - i, location.Col - i));
             }
 
