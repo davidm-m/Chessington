@@ -18,7 +18,7 @@ namespace Chessington.GameEngine.Pieces
                 {
                     if (i == 0 && j == 0) continue;
                     var square = Square.At(location.Row + i, location.Col + j);
-                    if (Square.IsValid(square))
+                    if (Square.IsValid(square) && (board.GetPiece(square) == null || board.GetPiece(square).Player != Player))
                     {
                         available.Add(square);
                     }
