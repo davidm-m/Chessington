@@ -16,7 +16,7 @@ namespace Chessington.GameEngine.Pieces
             {
                 for (var col = 0; col < 8; col++)
                 {
-                    available.Add(new Square(row,col));
+                    available.Add(Square.At(row,col));
                 }
             }
             return available;

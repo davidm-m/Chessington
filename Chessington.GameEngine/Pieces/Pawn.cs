@@ -16,17 +16,17 @@ namespace Chessington.GameEngine.Pieces
             {
                 if (location.Row == 7)
                 {
-                    available.Add(new Square(location.Row - 2, location.Col));
+                    available.Add(Square.At(location.Row - 2, location.Col));
                 }
-                available.Add(new Square(location.Row - 1, location.Col));
+                available.Add(Square.At(location.Row - 1, location.Col));
             }
             else
             {
                 if (location.Row == 1)
                 {
-                    available.Add(new Square(location.Row + 2, location.Col));
+                    available.Add(Square.At(location.Row + 2, location.Col));
                 }
-                available.Add(new Square(location.Row + 1, location.Col));
+                available.Add(Square.At(location.Row + 1, location.Col));
             }
 
             return available;
