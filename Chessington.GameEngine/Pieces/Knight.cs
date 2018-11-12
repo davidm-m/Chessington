@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Chessington.GameEngine.Pieces
@@ -12,37 +13,18 @@ namespace Chessington.GameEngine.Pieces
         {
             var available = new List<Square>();
             var location = board.FindPiece(this);
-            if (Square.IsValid(location.Row + 2, location.Col + 1))
+            for (var i = -2; i < 3; i++)
             {
-                available.Add(Square.At(location.Row + 2, location.Col + 1));
-            }
-            if (Square.IsValid(location.Row + 2, location.Col - 1))
-            {
-                available.Add(Square.At(location.Row + 2, location.Col - 1));
-            }
-            if (Square.IsValid(location.Row - 2, location.Col + 1))
-            {
-                available.Add(Square.At(location.Row - 2, location.Col + 1));
-            }
-            if (Square.IsValid(location.Row - 2, location.Col - 1))
-            {
-                available.Add(Square.At(location.Row - 2, location.Col - 1));
-            }
-            if (Square.IsValid(location.Row + 1, location.Col + 2))
-            {
-                available.Add(Square.At(location.Row + 1, location.Col + 2));
-            }
-            if (Square.IsValid(location.Row + 1, location.Col - 2))
-            {
-                available.Add(Square.At(location.Row + 1, location.Col - 2));
-            }
-            if (Square.IsValid(location.Row - 1, location.Col + 2))
-            {
-                available.Add(Square.At(location.Row - 1, location.Col + 2));
-            }
-            if (Square.IsValid(location.Row - 1, location.Col - 2))
-            {
-                available.Add(Square.At(location.Row - 1, location.Col - 2));
+                if (i == 0) continue;
+                for (var j = -2; j < 3; j++)
+                {
+                    if (j == 0 || Math.Abs(i) == Math.Abs(j)) continue;
+                    var square = Square.At(location.Row + i, location.Col + j);
+                    if (Square.IsValid(square) && (board.GetPiece(square) == null || board.GetPiece(square).Player != Player))
+                    {
+                        available.Add(square);
+                    }
+                }
             }
 
             return available;
