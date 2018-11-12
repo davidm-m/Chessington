@@ -14,9 +14,16 @@ namespace Chessington.GameEngine.Pieces
             var location = board.FindPiece(this);
             for (var row = 0; row < 8; row++)
             {
-                for (var col = 0; col < 8; col++)
+                if (row != location.Row)
                 {
-                    available.Add(Square.At(row,col));
+                    available.Add(Square.At(row, location.Col));
+                }
+            }
+            for (var col = 0; col < 8; col++)
+            {
+                if (col != location.Col)
+                {
+                    available.Add(Square.At(location.Row, col));
                 }
             }
             return available;
