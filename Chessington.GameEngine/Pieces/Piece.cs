@@ -25,123 +25,50 @@ namespace Chessington.GameEngine.Pieces
             board.MovePiece(currentSquare, newSquare);
         }
 
+        private List<Square> LookInDirection(Board board, int row, int col)
+        {
+            var available = new List<Square>();
+            var location = board.FindPiece(this);
+
+            var square = Square.At(location.Row + row, location.Col + col);
+            while (Square.IsValid(square))
+            {
+                if (board.GetPiece(square) == null)
+                {
+                    available.Add(square);
+                    square = Square.At(location.Row + row, location.Col + col);
+                }
+                else
+                {
+                    if (board.GetPiece(square).Player != Player)
+                    {
+                        available.Add(square);
+                    }
+
+                    break;
+                }
+            }
+
+            return available;
+        }
+
         public List<Square> GetLateralMoves(Board board)
         {
-            var moves = new List<Square>();
             var location = board.FindPiece(this);
-            for (var row = location.Row + 1; row < 8; row++)
-            {
-                if (board.GetPiece(Square.At(row, location.Col)) != null)
-                {
-                    if (board.GetPiece(Square.At(row, location.Col)).Player != Player)
-                    {
-                        moves.Add(Square.At(row, location.Col));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(row, location.Col));
-            }
-            for (var row = location.Row - 1; row >= 0; row--)
-            {
-                if (board.GetPiece(Square.At(row, location.Col)) != null)
-                {
-                    if (board.GetPiece(Square.At(row, location.Col)).Player != Player)
-                    {
-                        moves.Add(Square.At(row, location.Col));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(row, location.Col));
-            }
-            for (var col = location.Col + 1; col < 8; col++)
-            {
-                if (board.GetPiece(Square.At(location.Row, col)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row, col)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row, col));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row, col));
-            }
-            for (var col = location.Col - 1; col >= 0; col--)
-            {
-                if (board.GetPiece(Square.At(location.Row, col)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row, col)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row, col));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row, col));
-            }
-            return moves;
+            var above = LookInDirection(board, -1, 0);
+            var below = LookInDirection(board, 1, 0);
+            var left = LookInDirection(board, 0, -1);
+            var right = LookInDirection(board, 0, 1);
+            return (List<Square>) above.Union(below).Union(left).Union(right);
         }
 
         public List<Square> GetDiagonalMoves(Board board)
         {
-            var moves = new List<Square>();
-            var location = board.FindPiece(this);
-            for (var i = 1; location.Row + i < 8 && location.Col + i < 8; i++)
-            {
-                if (board.GetPiece(Square.At(location.Row + i, location.Col + i)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row + i, location.Col + i)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row + i, location.Col + i));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row + i, location.Col + i));
-            }
-            for (var i = 1; location.Row + i < 8 && location.Col - i >= 0; i++)
-            {
-                if (board.GetPiece(Square.At(location.Row + i, location.Col - i)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row + i, location.Col - i)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row + i, location.Col - i));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row + i, location.Col - i));
-            }
-            for (var i = 1; location.Row - i >= 0 && location.Col + i < 8; i++)
-            {
-                if (board.GetPiece(Square.At(location.Row - i, location.Col + i)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row - i, location.Col + i)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row - i, location.Col + i));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row - i, location.Col + i));
-            }
-            for (var i = 1; location.Row - i >= 0 && location.Col - i >= 0; i++)
-            {
-                if (board.GetPiece(Square.At(location.Row - i, location.Col - i)) != null)
-                {
-                    if (board.GetPiece(Square.At(location.Row - i, location.Col - i)).Player != Player)
-                    {
-                        moves.Add(Square.At(location.Row - i, location.Col - i));
-                    }
-
-                    break;
-                }
-                moves.Add(Square.At(location.Row - i, location.Col - i));
-            }
-
-            return moves;
+            var upLeft = LookInDirection(board, -1, -1);
+            var upRight = LookInDirection(board, -1, 1);
+            var downLeft = LookInDirection(board, 1, -1);
+            var downRight = LookInDirection(board, 1, 1);
+            return (List<Square>) upLeft.Union(upRight).Union(downLeft).Union(downRight);
         }
     }
 }
