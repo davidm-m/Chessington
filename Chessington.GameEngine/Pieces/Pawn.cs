@@ -14,10 +14,18 @@ namespace Chessington.GameEngine.Pieces
             var location = board.FindPiece(this);
             if (Player == Player.White)
             {
+                if (location.Row == 7)
+                {
+                    available.Add(new Square(location.Row - 2, location.Col));
+                }
                 available.Add(new Square(location.Row - 1, location.Col));
             }
             else
             {
+                if (location.Row == 1)
+                {
+                    available.Add(new Square(location.Row + 2, location.Col));
+                }
                 available.Add(new Square(location.Row + 1, location.Col));
             }
 
