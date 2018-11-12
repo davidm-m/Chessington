@@ -24,7 +24,16 @@ namespace Chessington.GameEngine.Pieces
             var doubleMoveSquare = Square.At(location.Row + 2 * direction, location.Col);
             if (!HasMoved && Square.IsValid(doubleMoveSquare) && board.GetPiece(doubleMoveSquare) == null)
             {
-                available.Add(Square.At(location.Row + 2*direction, location.Col));
+                available.Add(doubleMoveSquare);
+            }
+
+            for (var i = -1; i < 2; i = i + 2)
+            {
+                var square = Square.At(location.Row + direction, location.Col + i);
+                if (Square.IsValid(square) && board.GetPiece(square) != null && board.GetPiece(square).Player != Player)
+                {
+                    available.Add(square);
+                }
             }
 
             return available;
