@@ -19,7 +19,7 @@ namespace Chessington.GameEngine.Pieces
                 return available;
             }
             available.Add(Square.At(location.Row + direction, location.Col));
-            if (!HasMoved)
+            if (!HasMoved && board.GetPiece(Square.At(location.Row + 2*direction, location.Col)) == null)
             {
                 available.Add(Square.At(location.Row + 2*direction, location.Col));
             }
