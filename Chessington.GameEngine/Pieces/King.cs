@@ -24,6 +24,31 @@ namespace Chessington.GameEngine.Pieces
                     }
                 }
             }
+
+            var clearToQueensideCastle = true;
+            for (var i = 1; i < location.Col; i++)
+            {
+                if (board.GetPiece(Square.At(location.Row, i)) == null) continue;
+                clearToQueensideCastle = false;
+                break;
+            }
+            if (!HasMoved && clearToQueensideCastle && board.GetPiece(Square.At(location.Row, 0)) is Rook &&
+                !board.GetPiece(Square.At(location.Row, 0)).HasMoved)
+            {
+                available.Add(Square.At(location.Row, 2));
+            }
+            var clearToKingsideCastle = true;
+            for (var i = location.Col + 1; i < 7; i++)
+            {
+                if (board.GetPiece(Square.At(location.Row, i)) == null) continue;
+                clearToKingsideCastle = false;
+                break;
+            }
+            if (!HasMoved && clearToKingsideCastle && board.GetPiece(Square.At(location.Row, 7)) is Rook &&
+                !board.GetPiece(Square.At(location.Row, 7)).HasMoved)
+            {
+                available.Add(Square.At(location.Row, 6));
+            }
             return available;
         }
     }
