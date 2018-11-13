@@ -16,6 +16,7 @@
                 </DataTemplate>
             </ListView.ItemTemplate>
         </ListView>
+            <TextBlock Text="{Binding CheckStatus}" FontWeight="Bold" FontSize="14" />
         </StackPanel>
     </StackPanel>
 </Window>

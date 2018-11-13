@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using Chessington.GameEngine.Pieces;
 
@@ -40,7 +41,7 @@ namespace Chessington.GameEngine
                     if (board[row, col] == piece)
                         return Square.At(row, col);
 
-            throw new ArgumentException("The supplied piece is not on the board.", "piece");
+            throw new ArgumentException(Constants.MissingPieceExceptionMsg, "piece");
         }
 
         public void MovePiece(Square from, Square to)
@@ -50,10 +51,13 @@ namespace Chessington.GameEngine
 
             if (movingPiece.Player != CurrentPlayer)
             {
-                throw new ArgumentException("The supplied piece does not belong to the current player.");
+                throw new ArgumentException(Constants.WrongPlayerExceptionMsg);
             }
 
-            
+            if (MoveIntoCheck(from, to))
+            {
+                throw new ArgumentException(Constants.CheckExceptionMsg);
+            }
             
             //If the space we're moving to is occupied, we need to mark it as captured.
             if (board[to.Row, to.Col] != null)
@@ -61,7 +65,12 @@ namespace Chessington.GameEngine
                 OnPieceCaptured(board[to.Row, to.Col]);
             }
 
+            //We must find out if the move is a castle *before* the move is made, even though it isn't used until later
             var castle = MoveIsCastle(from, to);
+            if (castle != null && CastleThroughCheck(from, to))
+            {
+                throw new ArgumentException(Constants.CheckExceptionMsg);
+            }
 
             //Move the piece and set the 'from' square to be empty.
             board[to.Row, to.Col] = board[from.Row, from.Col];
@@ -75,6 +84,7 @@ namespace Chessington.GameEngine
             {
                 CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
                 OnCurrentPlayerChanged(CurrentPlayer);
+                UpdateCheckStatus();
             }
         }
 
@@ -109,6 +119,7 @@ namespace Chessington.GameEngine
         {
             WhiteCheck = IsPlayerInCheck(Player.White);
             BlackCheck = IsPlayerInCheck(Player.Black);
+            OnCheckStatusChanged(WhiteCheck, BlackCheck);
             return WhiteCheck || BlackCheck;
         }
 
@@ -131,6 +142,37 @@ namespace Chessington.GameEngine
             return false;
         }
 
+        private bool MoveIntoCheck(Square from, Square to)
+        {
+            var state = new Piece[GameSettings.BoardSize, GameSettings.BoardSize];
+            for (var i = 0; i < GameSettings.BoardSize; i++)
+            for (var j = 0; j < GameSettings.BoardSize; j++)
+            {
+                if (Square.At(i, j) == to) 
+                {
+                    state[i, j] = GetPiece(from);
+                }
+                else if (Square.At(i, j) == from)
+                {
+                    state[i, j] = null;
+                }
+                else
+                {
+                    state[i, j] = board[i, j];
+                }
+
+            }
+            var moved = new Board(CurrentPlayer, state);
+            return moved.IsPlayerInCheck(CurrentPlayer);
+        }
+
+        private bool CastleThroughCheck(Square from, Square to)
+        {
+            var columns = Enumerable.Range(to.Col > from.Col ? from.Col : to.Col, 3);
+
+            return columns.Any(i => MoveIntoCheck(@from, Square.At(@from.Row, i)));
+        }
+
         public delegate void PieceCapturedEventHandler(Piece piece);
         
         public event PieceCapturedEventHandler PieceCaptured;
@@ -149,6 +191,16 @@ namespace Chessington.GameEngine
         {
             var handler = CurrentPlayerChanged;
             if (handler != null) handler(player);
+        }
+
+        public delegate void CheckStatusChangedEventHandler(bool whiteInCheck, bool blackInCheck);
+
+        public event CheckStatusChangedEventHandler CheckStatusChanged;
+
+        protected virtual void OnCheckStatusChanged(bool whiteInCheck, bool blackInCheck)
+        {
+            var handler = CheckStatusChanged;
+            if (handler != null) handler(whiteInCheck, blackInCheck);
         }
     }
 }

@@ -29,5 +29,33 @@ namespace Chessington.GameEngine.Tests
 
             location.Should().Be(square);
         }
+
+        [Test]
+        public void Board_RecognisesMoveIsCastle()
+        {
+            var board = new Board();
+            var king = new King(Player.White);
+            var rook = new Rook(Player.White);
+            board.AddPiece(Square.At(7, 4), king);
+            board.AddPiece(Square.At(7, 0), rook);
+            var from = Square.At(7, 4);
+            var to = Square.At(7, 2);
+
+            board.MoveIsCastle(from, to).Should().NotBeNull();
+        }
+
+        [Test]
+        public void Board_RecognisesMoveIsNotCastle()
+        {
+            var board = new Board();
+            var king = new King(Player.White);
+            var rook = new Rook(Player.White);
+            board.AddPiece(Square.At(7, 4), king);
+            board.AddPiece(Square.At(7, 0), rook);
+            var from = Square.At(7, 4);
+            var to = Square.At(7, 3);
+
+            board.MoveIsCastle(from, to).Should().BeNull();
+        }
     }
 }

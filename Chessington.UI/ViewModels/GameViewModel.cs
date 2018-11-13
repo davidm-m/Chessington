@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Dynamic;
 using System.Runtime.CompilerServices;
 using System.Windows.Media.Imaging;
 using Chessington.GameEngine;
@@ -20,6 +21,7 @@ namespace Chessington.UI.ViewModels
             CapturedPieces = new ObservableCollection<BitmapImage>();
             ChessingtonServices.EventAggregator.Subscribe(this);
             CurrentPlayer = Enum.GetName(typeof(Player), Player.White);
+            CheckStatus = "";
         }
 
         public ObservableCollection<BitmapImage> CapturedPieces { get; private set; }
@@ -35,6 +37,8 @@ namespace Chessington.UI.ViewModels
             }
         }
 
+        public string CheckStatus { get; private set; }
+
         public void Handle(PieceTaken message)
         {
             CapturedPieces.Add(PieceImageFactory.GetImage(message.Piece));
@@ -43,6 +47,11 @@ namespace Chessington.UI.ViewModels
         public void Handle(CurrentPlayerChanged message)
         {
             CurrentPlayer = Enum.GetName(typeof(Player), message.Player);
+        }
+
+        public void Handle(CheckStatusChanged message)
+        {
+            CheckStatus = message.Status;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
