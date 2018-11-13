@@ -20,9 +20,9 @@ namespace Chessington.GameEngine.Pieces
 
         public void MoveTo(Board board, Square newSquare)
         {
-            HasMoved = true;
             var currentSquare = board.FindPiece(this);
             board.MovePiece(currentSquare, newSquare);
+            HasMoved = true;
         }
 
         private List<Square> LookInDirection(Board board, int row, int col)

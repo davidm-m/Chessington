@@ -10,6 +10,8 @@ namespace Chessington.GameEngine
         private readonly Piece[,] board;
         public Player CurrentPlayer { get; private set; }
         public IList<Piece> CapturedPieces { get; private set; } 
+        public bool WhiteCheck { get; private set; }
+        public bool BlackCheck { get; private set; }
 
         public Board()
             : this(Player.White) { }
@@ -51,20 +53,58 @@ namespace Chessington.GameEngine
                 throw new ArgumentException("The supplied piece does not belong to the current player.");
             }
 
+            
+            
             //If the space we're moving to is occupied, we need to mark it as captured.
             if (board[to.Row, to.Col] != null)
             {
                 OnPieceCaptured(board[to.Row, to.Col]);
             }
 
+            var castle = MoveIsCastle(from, to);
+
             //Move the piece and set the 'from' square to be empty.
             board[to.Row, to.Col] = board[from.Row, from.Col];
             board[from.Row, from.Col] = null;
 
-            CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
-            OnCurrentPlayerChanged(CurrentPlayer);
+            if (castle != null)
+            {
+                MovePiece(castle[0], castle[1]);
+            }
+            else
+            {
+                CurrentPlayer = movingPiece.Player == Player.White ? Player.Black : Player.White;
+                OnCurrentPlayerChanged(CurrentPlayer);
+            }
         }
-        
+
+        public List<Square> MoveIsCastle(Square from, Square to)
+        {
+            if (GetPiece(from) is King && !GetPiece(from).HasMoved &&
+                ((CurrentPlayer == Player.Black &&
+                  (to == Square.At(0, 2) || to == Square.At(0, 6))) ||
+                 (CurrentPlayer == Player.White && (to == Square.At(7, 2) || to == Square.At(7, 6)))))
+            {
+                var move = new List<Square>();
+                if (to.Col == 2)
+                {
+                    move.Add(Square.At(from.Row, 0));
+                    move.Add(Square.At(from.Row, 3));
+                }
+                else
+                {
+                    move.Add(Square.At(from.Row, 7));
+                    move.Add(Square.At(from.Row, 5));
+                }
+
+                return move;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         public delegate void PieceCapturedEventHandler(Piece piece);
         
         public event PieceCapturedEventHandler PieceCaptured;
