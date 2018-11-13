@@ -37,7 +37,17 @@ namespace Chessington.UI.ViewModels
             }
         }
 
-        public string CheckStatus { get; private set; }
+        private string checkStatus;
+
+        public string CheckStatus
+        {
+            get { return checkStatus; }
+            private set
+            {
+                checkStatus = value;
+                OnPropertyChanged();
+            }
+        }
 
         public void Handle(PieceTaken message)
         {
