@@ -36,7 +36,7 @@ namespace Chessington.GameEngine.Pieces
                 if (board.GetPiece(square) == null)
                 {
                     available.Add(square);
-                    square = Square.At(location.Row + row, location.Col + col);
+                    square = Square.At(square.Row + row, square.Col + col);
                 }
                 else
                 {
@@ -59,7 +59,7 @@ namespace Chessington.GameEngine.Pieces
             var below = LookInDirection(board, 1, 0);
             var left = LookInDirection(board, 0, -1);
             var right = LookInDirection(board, 0, 1);
-            return (List<Square>) above.Union(below).Union(left).Union(right);
+            return above.Concat(below).Concat(left).Concat(right).ToList();
         }
 
         public List<Square> GetDiagonalMoves(Board board)
@@ -68,7 +68,7 @@ namespace Chessington.GameEngine.Pieces
             var upRight = LookInDirection(board, -1, 1);
             var downLeft = LookInDirection(board, 1, -1);
             var downRight = LookInDirection(board, 1, 1);
-            return (List<Square>) upLeft.Union(upRight).Union(downLeft).Union(downRight);
+            return upLeft.Concat(upRight).Concat(downLeft).Concat(downRight).ToList();
         }
     }
 }
