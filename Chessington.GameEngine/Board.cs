@@ -105,6 +105,32 @@ namespace Chessington.GameEngine
             }
         }
 
+        private bool UpdateCheckStatus()
+        {
+            WhiteCheck = IsPlayerInCheck(Player.White);
+            BlackCheck = IsPlayerInCheck(Player.Black);
+            return WhiteCheck || BlackCheck;
+        }
+
+        public bool IsPlayerInCheck(Player player)
+        {
+            foreach (var p in board)
+            {
+                if (p != null && p.Player != player)
+                {
+                    foreach (var s in p.GetAvailableMoves(this))
+                    {
+                        if (GetPiece(s) != null && GetPiece(s) is King && GetPiece(s).Player == player)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+
+            return false;
+        }
+
         public delegate void PieceCapturedEventHandler(Piece piece);
         
         public event PieceCapturedEventHandler PieceCaptured;
