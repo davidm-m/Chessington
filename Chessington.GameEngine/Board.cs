@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using Chessington.GameEngine.Pieces;
+using System.Windows.Forms;
 
 namespace Chessington.GameEngine
 {
@@ -56,7 +57,8 @@ namespace Chessington.GameEngine
 
             if (MoveIntoCheck(from, to))
             {
-                throw new ArgumentException(Constants.CheckExceptionMsg);
+                MessageBox.Show("This move would put you in check.", "Illegal Move", MessageBoxButtons.OK);
+                return;
             }
             
             //If the space we're moving to is occupied, we need to mark it as captured.
@@ -69,7 +71,8 @@ namespace Chessington.GameEngine
             var castle = MoveIsCastle(from, to);
             if (castle != null && CastleThroughCheck(from, to))
             {
-                throw new ArgumentException(Constants.CheckExceptionMsg);
+                MessageBox.Show("Your king cannot castle from, through, or into check.", "Illegal Move", MessageBoxButtons.OK);
+                return;
             }
 
             //Move the piece and set the 'from' square to be empty.

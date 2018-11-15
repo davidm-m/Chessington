@@ -12,7 +12,7 @@ using Chessington.UI.Properties;
 
 namespace Chessington.UI.ViewModels
 {
-    public class GameViewModel : INotifyPropertyChanged, IHandle<PieceTaken>, IHandle<CurrentPlayerChanged>
+    public class GameViewModel : INotifyPropertyChanged, IHandle<PieceTaken>, IHandle<CurrentPlayerChanged>, IHandle<CheckStatusChanged>
     {
         private string currentPlayer;
 
