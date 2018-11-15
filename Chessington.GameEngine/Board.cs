@@ -67,7 +67,7 @@ namespace Chessington.GameEngine
                 OnPieceCaptured(board[to.Row, to.Col]);
             }
 
-            //We must find out if the move is a castle *before* the move is made, even though it isn't used until later
+            //We must find out if the move is a castle *before* the move is made
             var castle = MoveIsCastle(from, to);
             if (castle != null && CastleThroughCheck(from, to))
             {
